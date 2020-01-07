@@ -18,5 +18,5 @@ Note: The Dockerfile contains all environment dependencies to run this demo.
 
 2. Run the following:
 ```bash
-docker run --rm  -it  -p 8888:8888 --env-file ./env.list --hostname fle  nullstring/mongo-fle-demo
+docker run --rm  -it  -p 8888:8888 --env-file env.list --hostname fle  nullstring/mongo-fle-demo
 ```
