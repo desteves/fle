@@ -13,7 +13,7 @@ Demo MongoDB Client-Side Field Level Encryption. Uses Golang + Ubuntu in a Docke
 
 Note: Uses [this Dockerfile](https://github.com/desteves/mongo-fle-ubuntu-golang/blob/master/Dockerfile)
 
-Note: Add values to required variables specified in `./env.list.example` and rename the file to `./env.list`
+Note: Add values to required variables specified in `env.list.example` and rename the file to `env.list`
 
 
 ```bash
