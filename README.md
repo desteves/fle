@@ -17,11 +17,12 @@ docker run --rm  -it  -p 8888:8888 --env-file env.list --hostname fle  nullstrin
 
 ```json
 {
-    _id: "string",
-    name:"string",
-    message: "string" // encrypted/decrypted if inserted/read via /foo else as-is
+    "_id": "string",
+    "name":"string",
+    "message": "string" 
 }
 ```
+Note: `message` is encrypted/decrypted if inserted/read via /foo else as-is.
 
 ## Endpoints
 
