@@ -12,7 +12,6 @@ RUN mkdir -p /go/src /go/bin && chmod -R 777 /go && \
     rm -rf /var/lib/apt/lists/*  && \
     curl -sSOL https://dl.google.com/go/go$GOLANG_VERSION_OS_ARCH.tar.gz && \
 	tar -C /usr/local -xzf go$GOLANG_VERSION_OS_ARCH.tar.gz
-
 ENV PATH /usr/local/go/bin:/go/bin:$PATH
 ENV GOROOT /usr/local/go
 ENV GOPATH /go
@@ -43,6 +42,7 @@ RUN  rm -rf /usr/local/lib/libmongocrypt* && \
     /sbin/ldconfig -p | grep crypt && \
     rm -rf libmongocrypt  mongo-c-driver install 
 
+
 ##########################################################################
 # https://docs.mongodb.com/manual/reference/security-client-side-encryption-appendix/#installation
 ##########################################################################
@@ -51,24 +51,19 @@ RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
 RUN echo "deb [ arch=amd64 ] http://repo.mongodb.com/apt/ubuntu bionic/mongodb-enterprise/4.2 multiverse" |  tee /etc/apt/sources.list.d/mongodb-enterprise.list
 RUN apt-get update && apt-get install mongodb-enterprise-cryptd
 
+
 ##########################################################################
 # FLE Demo
 ##########################################################################
 
 EXPOSE  8888
-RUN mkdir -p /go/src/github.com/desteves
 WORKDIR /go/src/github.com/desteves/
-
 RUN git clone https://github.com/desteves/fle
-# RUN cd fle
-# RUN go get -d -v ./...
-# RUN go install -v ./...
-# RUN go build -tags cse main.go
-
-# CMD ["./main"]
-# COPY . .
 # go get -u all 
-CMD ["/bin/bash"]
+WORKDIR /go/src/github.com/desteves/fle
+RUN go build -tags cse main.go
 
+ENTRYPOINT [ "./main" ]
+# CMD ["/bin/bash"]
 
 
