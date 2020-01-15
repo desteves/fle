@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/mongodb-appeng/gaming-services-api/fle"
@@ -12,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 )
 
 // Foobar is
@@ -19,6 +21,7 @@ type Foobar struct {
 	ID      string `json:"_id" bson:"_id"`
 	Name    string `json:"name" bson:"name"`
 	Message string `json:"message" bson:"message"` //this field is encrypted if added via /foo endpoint, unencrypted if added via /bar endpoint
+	// Altname string `json:"altname" bson:"altname"`
 }
 
 //CreateEncryptedFoobarHandler inserts a document to tutorial.foobar. It uses Field Encryption on the field "message" to insert a new Foobar JSON document to the tutorial Database.
@@ -47,7 +50,7 @@ func CreateEncryptedFoobarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client, err = fle.CreateEncryptedMongoClient() // Only difference from CreateFoobarHandler
+	client, err = fle.CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), true) // Only difference from CreateFoobarHandler
 	if err != nil {
 		log.Error("! client - ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -90,7 +93,7 @@ func ReadEncryptedFoobarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// database
-	client, err := fle.CreateEncryptedMongoClient() // Only difference from ReadFoobarHandler
+	client, err := fle.CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), true) // Only difference from ReadFoobarHandler
 	if err != nil {
 		log.Error("! client - ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -132,7 +135,7 @@ func ReadFoobarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// database
-	client, err := fle.CreateMongoClient()
+	client, err := fle.CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), false)
 	if err != nil {
 		log.Error("! client - ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -179,7 +182,7 @@ func CreateFoobarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client, err = fle.CreateMongoClient()
+	client, err = fle.CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), false)
 	if err != nil {
 		log.Error("! client - ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)

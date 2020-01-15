@@ -1,6 +1,6 @@
 # MongoDB Field Level Encryption (FLE) Tutorial/Demo
 
-Demo MongoDB Client-Side Field Level Encryption. Uses Golang + Ubuntu in a Docker container. 
+Demo MongoDB Client-Side Field Level Encryption. Uses Golang + Ubuntu in a Docker container.  
 
 ## Run 
 
@@ -10,7 +10,7 @@ Note: The Dockerfile contains all environment dependencies to run this demo.
 
 2. Run the following:
 ```bash
-docker run --rm  -it  -p 8888:8888 --env-file env.list --hostname fle  nullstring/mongo-fle-demo
+docker run --rm  -it  -p 8888:8888 -p 27020:27020 --env-file env.list --hostname fle  nullstring/mongo-fle-demo
 ```
 
 ## `foobar` document
@@ -30,12 +30,22 @@ Note: `message` is encrypted/decrypted if inserted/read via /foo else as-is.
 - `GET /foo/{id}` -- Reads a `foobar` document with matching `id` and attempts to decrypt the `message` field.
 
 - `POST /bar` -- Inserts a valid `foobar` document to the `tutorial.foobar` namespace. (sans encryption)
-- `GET /bar/{id}` -- Reads a `foobar` document with matching `id`.
+- `GET /bar/{id}` -- Reads a `foobar` document with matching `id` as-is. (sans decryption)
 
 
 ## Test
 
 Import [Postman collection]().
+
+For debugging/ad-hoc testing:
+```bash
+git clone https://github.com/desteves/fle.git
+cd fle
+docker run --rm -it -v $PWD:/go/src/github.com/desteves/fle --entrypoint /bin/bash -p 8777:8888  -p 27020:27020 --env-file env.list --hostname fle-testing nullstring/mongo-fle-demo
+go build -tags cse main.go
+./main
+```
+
 
 ## References
 

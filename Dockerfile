@@ -56,14 +56,11 @@ RUN apt-get update && apt-get install mongodb-enterprise-cryptd
 # FLE Demo
 ##########################################################################
 
-EXPOSE  8888
+EXPOSE  8888 27020
 WORKDIR /go/src/github.com/desteves/
 RUN git clone https://github.com/desteves/fle
-# go get -u all 
 WORKDIR /go/src/github.com/desteves/fle
 RUN go build -tags cse main.go
-
 ENTRYPOINT [ "./main" ]
-# CMD ["/bin/bash"]
 
 
