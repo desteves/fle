@@ -21,7 +21,6 @@ type Foobar struct {
 	ID      string `json:"_id" bson:"_id"`
 	Name    string `json:"name" bson:"name"`
 	Message string `json:"message" bson:"message"` //this field is encrypted if added via /foo endpoint, unencrypted if added via /bar endpoint
-	// Altname string `json:"altname" bson:"altname"`
 }
 
 //CreateEncryptedFoobarHandler inserts a document to tutorial.foobar. It uses Field Encryption on the field "message" to insert a new Foobar JSON document to the tutorial Database.
@@ -76,7 +75,6 @@ func CreateEncryptedFoobarHandler(w http.ResponseWriter, r *http.Request) {
 func ReadEncryptedFoobarHandler(w http.ResponseWriter, r *http.Request) {
 
 	var client *mongo.Client
-	var doc Foobar
 
 	defer func() {
 		if r != nil {
@@ -101,10 +99,20 @@ func ReadEncryptedFoobarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer client.Disconnect(context.TODO())
 	filter := bson.D{primitive.E{Key: "_id", Value: ID}}
-	err = client.Database("tutorial").Collection("foobar").FindOne(context.TODO(), filter).Decode(&doc)
+	singleResult := client.Database("tutorial").Collection("foobar").FindOne(context.TODO(), filter)
+	if singleResult.Err() != nil {
+		log.Error("! find - ", singleResult.Err())
+		if singleResult.Err() == mongo.ErrNoDocuments {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	var doc bson.M
+	err = singleResult.Decode(&doc)
 	if err != nil {
-		log.Error("! find - ", err.Error())
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -118,7 +126,6 @@ func ReadEncryptedFoobarHandler(w http.ResponseWriter, r *http.Request) {
 func ReadFoobarHandler(w http.ResponseWriter, r *http.Request) {
 
 	var client *mongo.Client
-	var doc Foobar
 
 	defer func() {
 		if r != nil {
@@ -135,7 +142,7 @@ func ReadFoobarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// database
-	client, err := fle.CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), false)
+	client, err := fle.CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), false) // Only difference from ReadFoobarHandler
 	if err != nil {
 		log.Error("! client - ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -143,10 +150,20 @@ func ReadFoobarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer client.Disconnect(context.TODO())
 	filter := bson.D{primitive.E{Key: "_id", Value: ID}}
-	err = client.Database("tutorial").Collection("foobar").FindOne(context.TODO(), filter).Decode(&doc)
+	singleResult := client.Database("tutorial").Collection("foobar").FindOne(context.TODO(), filter)
+	if singleResult.Err() != nil {
+		log.Error("! find - ", singleResult.Err())
+		if singleResult.Err() == mongo.ErrNoDocuments {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	var doc bson.M
+	err = singleResult.Decode(&doc)
 	if err != nil {
-		log.Error("! find - ", err.Error())
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

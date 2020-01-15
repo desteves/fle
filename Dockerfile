@@ -62,5 +62,3 @@ RUN git clone https://github.com/desteves/fle
 WORKDIR /go/src/github.com/desteves/fle
 RUN go build -tags cse main.go
 ENTRYPOINT [ "./main" ]
-
-

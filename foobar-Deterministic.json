@@ -1,0 +1,16 @@
+{
+        "bsonType": "object",
+        "properties": {
+            "message": {
+                "encrypt": {
+                    "keyId": [
+                      {"$binary": { "base64": "zcz4SKOBQE6w0Mhs30DpJQ==", "subType": "4" } }  
+
+                      ],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            }
+        }
+
+}

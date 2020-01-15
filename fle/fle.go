@@ -2,6 +2,7 @@ package fle
 
 import (
 	"context"
+	"encoding/base64"
 	"io/ioutil"
 	"os"
 
@@ -18,6 +19,7 @@ var (
 	keydb        string
 	keycoll      string
 	namespace    string
+	encRulesFile string
 )
 
 func init() {
@@ -25,6 +27,7 @@ func init() {
 	// vars set up
 	keydb = os.Getenv("MONGODB_KEY_VAULT_DB")
 	keycoll = os.Getenv("MONGODB_KEY_VAULT_COLL")
+	encRulesFile = os.Getenv("ENCRYPTION_RULES_JSON_FILE")
 	namespace = keydb + "." + keycoll
 	kmsProviders = map[string]map[string]interface{}{
 		"aws": {
@@ -52,15 +55,15 @@ func init() {
 		log.Fatalf("! key vault client - %v", err)
 	}
 	defer keyVaultClient.Close(context.TODO())
-	dataKeyOptions := options.DataKey().SetMasterKey(masterKey).SetKeyAltNames([]string{"awskms"})
+	dataKeyOptions := options.DataKey().SetMasterKey(masterKey).SetKeyAltNames([]string{"altname", "aws_dk", "awskms"})
 	result, err := keyVaultClient.CreateDataKey(context.TODO(), "aws", dataKeyOptions)
 	if err != nil {
 		log.Fatalf("! create data key - %v", err)
 	}
 
 	// Insert the data specified into the admin.datakeys
-	log.Infof(" key valut create data key result is %+v", result)
-
+	log.Infof(" data key is {\"$binary\": { \"base64\": \"%+v\", \"subType\": \"%+v\" } } ", base64.StdEncoding.EncodeToString(result.Data), result.Subtype)
+	log.Infof(" For Deterministic algorithm, you ****MUST**** provide the above result as part of the \"keyId\" in %+v", encRulesFile)
 }
 
 // CreateMongoClient is
@@ -70,8 +73,21 @@ func CreateMongoClient(uri string, wc *writeconcern.WriteConcern, useEncryption 
 
 	/////////////////// adds encryption to the mongo client
 	if useEncryption {
+		var sm bson.D
+		var content []byte
+		content, err = ioutil.ReadFile(encRulesFile)
+		if err != nil {
+			log.Errorf("! reading %v:%v", encRulesFile, err)
+			return
+		}
+
+		if err = bson.UnmarshalExtJSON(content, false, &sm); err != nil {
+			log.Errorf("! unmarshal %v: %v", encRulesFile, err)
+			return
+		}
+
 		schemaMap := map[string]interface{}{
-			"tutorial.foobar": readJSONFile("foobarSchemaMap.json"),
+			"tutorial.foobar": sm,
 		}
 		autoEncOptions := options.AutoEncryption().
 			SetKeyVaultNamespace(namespace).
@@ -84,18 +100,4 @@ func CreateMongoClient(uri string, wc *writeconcern.WriteConcern, useEncryption 
 
 	client, err = mongo.Connect(context.TODO(), clientOptions)
 	return
-}
-
-// helper private function
-func readJSONFile(file string) bson.D {
-	content, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Fatalf("ReadFile error for %v: %v", file, err)
-	}
-
-	var fileDoc bson.D
-	if err = bson.UnmarshalExtJSON(content, false, &fileDoc); err != nil {
-		log.Fatalf("UnmarshalExtJSON error for file %v: %v", file, err)
-	}
-	return fileDoc
 }
