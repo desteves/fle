@@ -55,7 +55,7 @@ func init() {
 		log.Fatalf("! key vault client - %v", err)
 	}
 	defer keyVaultClient.Close(context.TODO())
-	dataKeyOptions := options.DataKey().SetMasterKey(masterKey).SetKeyAltNames([]string{"altname", "aws_dk", "awskms"})
+	dataKeyOptions := options.DataKey().SetMasterKey(masterKey).SetKeyAltNames([]string{"awskmsfoobartutorial"})
 	result, err := keyVaultClient.CreateDataKey(context.TODO(), "aws", dataKeyOptions)
 	if err != nil {
 		log.Fatalf("! create data key - %v", err)
@@ -63,7 +63,7 @@ func init() {
 
 	// Insert the data specified into the admin.datakeys
 	log.Infof(" data key is {\"$binary\": { \"base64\": \"%+v\", \"subType\": \"%+v\" } } ", base64.StdEncoding.EncodeToString(result.Data), result.Subtype)
-	log.Infof(" For Deterministic algorithm, you ****MUST**** provide the above result as part of the \"keyId\" in %+v", encRulesFile)
+	log.Infof("[ACTION REQUIRED] You ****MUST**** provide the above result as part of the \"keyId\" in %+v", encRulesFile)
 }
 
 // CreateMongoClient is
