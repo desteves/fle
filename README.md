@@ -2,11 +2,14 @@
 
 Demo MongoDB Client-Side Field Level Encryption. Uses Golang + Ubuntu in a Docker container.  
 
+
 ## Run 
 
-Note: The Dockerfile contains all environment dependencies to run this demo.
+Note: The Dockerfile contains __all__ environment dependencies to run this demo.
 
 1. Add values to required variables specified in `env.list.example` and rename the file to `env.list`
+    - Need to have a MongoDB deployment running, if not, delopoy a [free one in Atlas](https://cloud.mongodb.com/user#/atlas/register/accountProfile) and grab the connection string
+    - Need to have [AWS KMS](https://aws.amazon.com/kms/) configured 
 
 2. Run the following:
 ```bash
