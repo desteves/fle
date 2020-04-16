@@ -63,7 +63,7 @@ func init() {
 
 	// Insert the data specified into the admin.datakeys
 	log.Infof(" data key is {\"$binary\": { \"base64\": \"%+v\", \"subType\": \"%+v\" } } ", base64.StdEncoding.EncodeToString(result.Data), result.Subtype)
-	log.Infof("[ACTION REQUIRED] You ****MUST**** provide the above result as part of the \"keyId\" in %+v", encRulesFile)
+	log.Warnf("[ACTION REQUIRED] You ****MUST**** provide the above result as part of the \"keyId\" in %+v", encRulesFile)
 }
 
 // CreateMongoClient is
