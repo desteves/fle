@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/desteves/fle/fle"
 	"github.com/gorilla/mux"
-	"github.com/mongodb-appeng/gaming-services-api/fle"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
+	"github.com/desteves/fle/api"
 	"github.com/gorilla/mux"
-	"github.com/mongodb-appeng/gaming-services-api/api"
 )
 
 func main() {
