@@ -5,7 +5,7 @@ FROM ubuntu:bionic
 # golang https://golang.org/doc/install 
 ##########################################################################
 
-ENV GOLANG_VERSION_OS_ARCH 1.13.5.linux-amd64
+ENV GOLANG_VERSION_OS_ARCH 1.14.2.linux-amd64
 RUN mkdir -p /go/src /go/bin && chmod -R 777 /go && \
     apt-get update && \
     apt-get install -y curl gnupg git make build-essential libssl-dev pkg-config wget && \
