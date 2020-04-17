@@ -39,6 +39,7 @@ func init() {
 		"region": os.Getenv("AWS_KMS_REGION"),
 		"key":    os.Getenv("AWS_KMS_ARN_ROLE"),
 	}
+
 	// clean up --  important to do this with { w: maj }
 	client, err := CreateMongoClient(os.Getenv("MONGODB_ATLAS_URI"), writeconcern.New(writeconcern.WMajority()), false)
 	if err != nil {
