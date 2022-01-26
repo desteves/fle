@@ -1,5 +1,7 @@
 # MongoDB Field Level Encryption (FLE) Tutorial/Demo
 
+[![Git](https://app.soluble.cloud/api/v1/public/badges/4d8143ad-b8fa-4211-bea1-e60a5452bdfc.svg?orgId=679096383598)](https://app.soluble.cloud/repos/details/github.com/desteves/fle?orgId=679096383598)  
+
 Demo MongoDB Client-Side Field Level Encryption. Uses Golang + Ubuntu in a Docker container.  
 
 
